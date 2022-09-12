@@ -1,21 +1,32 @@
 from tech_news.database import search_news
+from datetime import datetime
 
 
 # Requisito 6
 def search_by_title(title):
-    news = list()
+    search_news_title = list()
     # $regex e "$options": "i" -> encontrados neste link:
     # https://stackoverflow.com/questions/3483318/performing-regex-queries-with-pymongo
     get_title = search_news({"title": {"$regex": title, "$options": "i"}})
 
     for title_news in get_title:
-        news.append((title_news["title"], title_news["url"]))
-    return news
+        search_news_title.append((title_news["title"], title_news["url"]))
+    return search_news_title
 
 
 # Requisito 7
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    try:
+        search_news_date = list()
+        format_date = datetime.strptime(date, "%Y-%m-%d").strftime("%d/%m/%Y")
+        get_date = search_news({"timestamp": format_date})
+
+        for date_news in get_date:
+            search_news_date.append((date_news["title"], date_news["url"]))
+
+        return search_news_date
+    except ValueError:
+        raise ValueError("Data inválida")
 
 
 # Requisito 8
