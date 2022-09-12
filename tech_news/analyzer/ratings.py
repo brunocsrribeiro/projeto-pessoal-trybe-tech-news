@@ -1,8 +1,9 @@
-# Requisito 10
 from operator import itemgetter
 from tech_news.database import find_news
+from tech_news.database import db
 
 
+# Requisito 10
 def top_5_news():
     ordered_news = list()
     rating_news = sorted(
@@ -15,4 +16,13 @@ def top_5_news():
 
 # Requisito 11
 def top_5_categories():
-    """Seu código deve vir aqui"""
+    ordered_news = list(
+        db.news.aggregate(
+            list((
+                {"$group": {"_id": "$category", "count": {"$sum": 1}}},
+                {"$sort": {"count": -1, "_id": 1}},
+            ))
+        )
+    )
+
+    return [category["_id"] for category in ordered_news[:5]]
